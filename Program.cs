@@ -1,86 +1,72 @@
-/* пользователь вводит реагенты, программа делит их на атомы, молярную массу, давление температуру. 
-на выходе получает жидкость и может получить газ/осадок*/
-
 using System;
 using System.Globalization;
-using System.Runtime.ExceptionServices;
+using System.Linq;
 
-namespace ConsoleApp1
+namespace _2
 {
     internal class Program
     {
-
-        public struct Reagent
+        public class Reagent
         {
             public string name;
-            public double mass;
-            public float pressure;
-            public float temperature;
-            public string simpleOrNot;
         }
-
         static void Main(string[] args)
         {
             Console.Clear();
-
             Reagent firstReagent = new Reagent();
             Console.Write("Название: ");
             firstReagent.name = Console.ReadLine();
-            char[] firstReagentNameArray = firstReagent.name.ToCharArray();
-            string firstSubstanceInFirst = "";
-            string secondSubstanceInFirst = "";
-            int startIndex = -1;
-            int secondIndex = -1;
+            char[] firstNameArray = firstReagent.name.ToCharArray();
+            string firstInFirst = "";
+            string secondInFirst = "";
+            string nameTemp = "";
+            string firstInFirstCount = "1";
+            string secondInFirstCount = "1";
+            string countTemp = "1";
             if (!string.IsNullOrEmpty(firstReagent.name))
             {
-                for (int i = 0; i < firstReagentNameArray.Length; i++)
+                for (int i = 0; i < firstNameArray.Length; i++)
                 {
-                    if (char.IsUpper(firstReagentNameArray[i]))
+                    if (char.IsUpper(firstNameArray[i]) && nameTemp != "")
                     {
-                        if (startIndex == -1) startIndex = i;
-                        else if (secondIndex == -1)
-                        {
-                            secondIndex = i;
-                            break;
-                        }
+                        if (firstInFirst == "") firstInFirst = nameTemp;
+                        else secondInFirst = nameTemp;
+                        nameTemp = "";
+                    }
+                    if (char.IsDigit(firstNameArray[i]))
+                    {
+                        countTemp = char.ToString(firstNameArray[i]);
+                        if (firstInFirst == "") firstInFirstCount = countTemp;
+                        else secondInFirstCount = countTemp;
+                        continue;
+                    }
+                    else
+                    {
+                        nameTemp += firstNameArray[i];
                     }
                 }
-                if (startIndex != -1)
+                if (nameTemp != "")
                 {
-                    for (int i = startIndex; i < secondIndex; i++)
-                    {
-                        firstSubstanceInFirst += firstReagent.name[i];
-                    }
-                }
-                if (secondIndex != -1)
-                {
-                    for (int i = secondIndex; i < firstReagentNameArray.Length; i++)
-                    {
-                        secondSubstanceInFirst += firstReagent.name[i];
-                    }
+                    if (firstInFirst == "") firstInFirst = nameTemp;
+                    else secondInFirst = nameTemp;
                 }
             }
-            Console.WriteLine($"Первое вещество: {firstSubstanceInFirst}");
-            Console.WriteLine($"Второе вещество: {secondSubstanceInFirst}");
-            //Console.Write("Молярная масса: ");
-            //firstReagent.mass = Convert.ToDouble(Console.ReadLine());
-            //Console.Write("Давление: ");
-            //firstReagent.pressure = float.Parse(Console.ReadLine());
-            //Console.Write("Температура: ");
-            //firstReagent.temperature = float.Parse(Console.ReadLine());
-
-            //Reagent secondReagent = new Reagent();
-            //Console.Write("Название: ");
-            //secondReagent.name = Console.ReadLine();
-
-            //Console.Write("Молярная масса: ");
-            //secondReagent.mass = Convert.ToDouble(Console.ReadLine());
-            //Console.Write("Давление: ");
-            //secondReagent.pressure = float.Parse(Console.ReadLine());
-            //Console.Write("Температура: ");
-            //secondReagent.temperature = float.Parse(Console.ReadLine());
-
-            //расчет уравнения
+            string[] groups = { "OH", "SO4", "NO3", "CO3", "PO4", "NH4" };
+            foreach (string group in groups)
+            {
+                if (firstReagent.name.Contains(group))
+                {
+                    secondInFirst = group;
+                    secondInFirstCount = "1";
+                }
+            }
+            Console.WriteLine($"Первое вещество: {firstInFirst}");
+            Console.WriteLine($"Количество атомов в первом веществе: {firstInFirstCount}");
+            if (!string.IsNullOrEmpty(secondInFirst))
+            {
+                Console.WriteLine($"Второе вещество: {secondInFirst}");
+                Console.WriteLine($"Количество атомов во втором веществе: {secondInFirstCount}");
+            }
             Console.ReadKey();
         }
     }
